@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conversor de Criptomoedas</title>
+  </head>
+  <body>
+    <h1>Conversor de Criptomoedas</h1>
+
+    <form action="/convert" method="POST">
+      <label for="from_currency">Converter de:</label>
+      <select id="from_currency" name="from_currency" required>
+        <optgroup label="Moedas Tradicionais">
+          {% for currency in currencies %}
+          <option value="{{ currency }}">{{ currency | upper }}</option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Criptomoedas">
+          {% for crypto in cryptos %}
+          <option value="{{ crypto }}">{{ crypto | capitalize }}</option>
+          {% endfor %}
+        </optgroup>
+      </select>
+
+      <label for="to_currency">Converter para:</label>
+      <select id="to_currency" name="to_currency" required>
+        <optgroup label="Moedas Tradicionais">
+          {% for currency in currencies %}
+          <option value="{{ currency }}">{{ currency | upper }}</option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Criptomoedas">
+          {% for crypto in cryptos %}
+          <option value="{{ crypto }}">{{ crypto | capitalize }}</option>
+          {% endfor %}
+        </optgroup>
+      </select>
+
+      <label for="amount">Valor:</label>
+      <input type="number" id="amount" name="amount" step="0.01" required />
+
+      <button type="submit">Converter</button>
+    </form>
+
+    {% if total %}
+    <h2>Resultado da Conversão</h2>
+    <p>
+      {{ amount }} {{ from_currency | upper }} equivale a {{ total }} {{
+      currency | upper }}
+    </p>
+    {% endif %}
+  </body>
+</html>

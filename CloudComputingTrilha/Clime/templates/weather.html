@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Previsão do Clima</title>
+  </head>
+  <body>
+    <h1>Clima em {{ city }}</h1>
+
+    <ul>
+      {% for weather in weather['consolidated_weather'] %}
+      <li>
+        Data: {{ weather['applicable_date'] }} <br />
+        Estado: {{ weather['weather_state_name'] }} <br />
+        Temperatura: {{ weather['the_temp'] | round(2) }}°C <br />
+        Máxima: {{ weather['max_temp'] | round(2) }}°C <br />
+        Mínima: {{ weather['min_temp'] | round(2) }}°C <br />
+        Umidade: {{ weather['humidity'] }}% <br />
+      </li>
+      {% endfor %}
+    </ul>
+
+    <a href="/">Fazer outra consulta</a>
+  </body>
+</html>

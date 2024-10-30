@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload de Imagem com OCR</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Reconhecimento de Texto em Imagem</h1>
+      <label for="imageUpload" class="upload-label">Escolher Imagens</label>
+      <input type="file" id="imageUpload" accept="image/*" multiple />
+
+      <div id="imagePreviewContainer"></div>
+
+      <div id="output" class="output"></div>
+
+      <h2>Textos Extraídos</h2>
+      <div id="extractedTextContainer"></div>
+
+      <!-- Opções de ordenação -->
+      <h2>Ordenar Texto</h2>
+      <select id="sortOption">
+        <option value="alphabetical">Ordem Alfabética</option>
+        <option value="length">Por Tamanho da Palavra</option>
+        <option value="frequency">Por Frequência</option>
+      </select>
+      <button id="sortButton" class="upload-label">Ordenar</button>
+
+      <h2>Texto Ordenado</h2>
+
+      <button id="downloadButton" class="upload-label" style="display: none">
+        Baixar Texto Ordenado
+      </button>
+
+      <ul id="sortedTextList" class="text-list"></ul>
+    </div>
+
+    <script>
+      let originalWords = [];
+
+      // Função para pré-visualizar imagens
+      function previewImages(files) {
+        const container = document.getElementById("imagePreviewContainer");
+        container.innerHTML = ""; // Limpa o conteúdo anterior
+
+        for (const file of files) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const img = document.createElement("img");
+            img.src = event.target.result;
+            img.style.maxWidth = "300px"; // Define um tamanho máximo
+            img.style.margin = "10px"; // Adiciona um espaço entre as imagens
+            container.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      document
+        .getElementById("imageUpload")
+        .addEventListener("change", async function (event) {
+          const files = event.target.files;
+          if (files.length === 0) return;
+
+          previewImages(files); // Chama a função de pré-visualização
+
+          const formData = new FormData();
+          for (let i = 0; i < files.length; i++) {
+            formData.append("images", files[i]);
+          }
+
+          try {
+            const response = await fetch("/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (response.ok) {
+              const results = await response.json();
+              displayExtractedTexts(results);
+            } else {
+              document.getElementById("output").innerHTML =
+                "Erro no processamento das imagens.";
+            }
+          } catch (error) {
+            console.error("Erro:", error);
+            document.getElementById("output").innerHTML =
+              "Erro ao conectar com o servidor.";
+          }
+        });
+
+      function displayExtractedTexts(results) {
+        const container = document.getElementById("extractedTextContainer");
+        container.innerHTML = "";
+        originalWords = []; // Reinicializa a lista de palavras
+
+        results.forEach((result, index) => {
+          const div = document.createElement("div");
+          div.innerHTML = `<h3>Texto da Imagem:</h3><p>${result.text}</p>`;
+          container.appendChild(div);
+
+          // Adiciona as palavras à lista original
+          originalWords.push(...result.words);
+        });
+
+        // Atualiza a lista ordenada
+        updateSortedList(originalWords);
+      }
+
+      document
+        .getElementById("sortButton")
+        .addEventListener("click", function () {
+          const sortOption = document.getElementById("sortOption").value;
+          let sortedWords;
+
+          if (sortOption === "alphabetical") {
+            sortedWords = [...originalWords].sort();
+          } else if (sortOption === "length") {
+            sortedWords = [...originalWords].sort(
+              (a, b) => a.length - b.length
+            );
+          } else if (sortOption === "frequency") {
+            sortedWords = [...originalWords].sort((a, b) => {
+              const frequencyA = originalWords.filter(
+                (word) => word === a
+              ).length;
+              const frequencyB = originalWords.filter(
+                (word) => word === b
+              ).length;
+              return frequencyB - frequencyA; // Ordem decrescente
+            });
+          }
+
+          updateSortedList(sortedWords);
+
+          // Exibe o botão de download após a ordenação
+          document.getElementById("downloadButton").style.display =
+            "inline-block";
+        });
+
+      function updateSortedList(sortedWords) {
+        const sortedTextList = document.getElementById("sortedTextList");
+        sortedTextList.innerHTML = "";
+        sortedWords.forEach((word) => {
+          const li = document.createElement("li");
+          li.textContent = word;
+          sortedTextList.appendChild(li);
+        });
+      }
+
+      document
+        .getElementById("downloadButton")
+        .addEventListener("click", async function () {
+          const sortedWords = Array.from(
+            document.getElementById("sortedTextList").children
+          ).map((li) => li.textContent);
+
+          const response = await fetch("/download", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sortedWords }),
+          });
+
+          if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "sorted_words.txt";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+          } else {
+            alert("Erro ao baixar o arquivo.");
+          }
+        });
+    </script>
+  </body>
+</html>

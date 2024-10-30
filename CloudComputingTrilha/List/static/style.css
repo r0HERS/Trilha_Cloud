@@ -1,0 +1,100 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f9;
+}
+
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+}
+
+.container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.upload-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.output {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fafafa;
+    text-align: left;
+    font-size: 16px;
+}
+textarea {
+    width: 100%;
+    height: 150px;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    resize: none;
+}
+
+.text-list {
+    list-style-type: disc;
+    padding: 0;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.text-list li {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+#imagePreviewContainer {
+    margin-top: 20px;
+}
+
+#imagePreview {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 5px;
+}
+
+#sortOption,
+#sortButton {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#extractedTextContainer {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#extractedTextContainer div {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #fafafa;
+}

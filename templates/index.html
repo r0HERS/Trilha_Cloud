@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Upload e Processamento de Imagem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            max-width: 1200px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .upload-section, .result-section {
+            width: 48%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .upload-section {
+            border-right: 2px solid #ddd;
+            padding-right: 20px;
+        }
+        .result-section {
+            padding-left: 20px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        img {
+            max-width: 100%;
+            max-height: 400px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h2>Carregar Imagem</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                
+                <!-- Filtro -->
+                <select name="filter" required>
+                    <option value="BLUR">Desfoque</option>
+                    <option value="CONTOUR">Contorno</option>
+                    <option value="DETAIL">Detalhes</option>
+                    <option value="EDGE_ENHANCE">Aprimorar Borda</option>
+                    <option value="SHARPEN">Aguçar</option>
+                </select>
+                
+                <button type="submit" class="btn">Upload Imagem</button>
+            </form>
+        </div>
+
+        <!-- Result Section -->
+        <div class="result-section">
+            <h2>Imagem Processada</h2>
+            {% if processed_image_url %}
+                <img src="{{ processed_image_url }}" alt="Imagem Processada">
+            {% else %}
+                <p>Imagem processada aparecerá aqui após o upload.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
